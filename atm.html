@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>
+        </title>
+        <script>
+            (async function(){
+                const URL = 'https://filebase.xyz/pbatm/';
+
+                let ATMs = await fetch(URL);
+
+                ATMs = await ATMs.json();
+
+                console.log(ATMs);
+
+                globalThis.navigator.geolocation.getCurrentPosition(function(userPosition){
+                    let user_latitude = userPosition.coords.latitude;
+                    let user_longitude = userPosition.coords.longitude;  
+                });
+            })();
+
+            function degreesToRadians(degrees) {
+                return degrees * Math.PI / 180;
+            }
+
+            function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+                var earthRadiusKm = 6371;
+
+                var dLat = degreesToRadians(lat2-lat1);
+                var dLon = degreesToRadians(lon2-lon1);
+
+                lat1 = degreesToRadians(lat1);
+                lat2 = degreesToRadians(lat2);
+
+                var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+                return earthRadiusKm * c;
+            }
+
+            let distances = []
+
+            for(i = 0;i <= 335; i++){
+                distances.push(distanceInKmBetweenEarthCoordinates(user_latitude,user_longitude,ATMs.devices[i].latitude,ATMs.devices[i].longitude));
+            }
+
+            console.log(distances);
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
