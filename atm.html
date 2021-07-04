@@ -1,22 +1,9 @@
+
 <html>
     <head>
         <title>
         </title>
         <script>
-            (async function(){
-                const URL = 'https://filebase.xyz/pbatm/';
-
-                let ATMs = await fetch(URL);
-
-                ATMs = await ATMs.json();
-
-                console.log(ATMs);
-
-                globalThis.navigator.geolocation.getCurrentPosition(function(userPosition){
-                    let user_latitude = userPosition.coords.latitude;
-                    let user_longitude = userPosition.coords.longitude;  
-                });
-            })();
 
             function degreesToRadians(degrees) {
                 return degrees * Math.PI / 180;
@@ -37,13 +24,38 @@
                 return earthRadiusKm * c;
             }
 
-            let distances = []
 
-            for(i = 0;i <= 335; i++){
-                distances.push(distanceInKmBetweenEarthCoordinates(user_latitude,user_longitude,ATMs.devices[i].latitude,ATMs.devices[i].longitude));
-            }
+            (async function(){
+                const URL = 'https://filebase.xyz/pbatm/';
 
-            console.log(distances);
+                let ATMs = await fetch(URL);
+
+                ATMs = await ATMs.json();
+
+                console.log(ATMs);
+
+                globalThis.navigator.geolocation.getCurrentPosition(function(userPosition){
+                    let user_latitude = userPosition.coords.latitude;
+                    let user_longitude = userPosition.coords.longitude;  
+
+                    let distances = []
+
+                    for(let atm of ATMs.devices){
+
+                            let dist = distanceInKmBetweenEarthCoordinates(user_latitude,user_longitude, atm.longitude, atm.latitude);
+
+                            atm.distance = dist;
+
+                    }
+                    
+                    console.log(ATMs.devices); 
+
+                });
+
+
+            })();
+
+
         </script>
     </head>
     <body>
